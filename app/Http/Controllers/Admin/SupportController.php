@@ -18,8 +18,15 @@ class SupportController extends Controller
 
     public function index(Request $request)
     {
-        $supports = $this->service->getAll($request->filter);
-        return view('admin/supports/index', compact('supports'));
+        $supports = $this->service->paginate(
+            page: $request->get('page', 1),
+            totalPerPage: $request->get('per_page', 1),
+            filter: $request->filter
+        );
+
+        $filters = ['filter' => $request->get('filter', '')];
+
+        return view('admin/supports/index', compact('supports', 'filters'));
     }
 
     public function create ()
@@ -27,7 +34,7 @@ class SupportController extends Controller
         return view('admin/supports/create');
     }
 
-    public function store(StoreUpdateSupportRequest $request, Support $support)
+    public function store(StoreUpdateSupportRequest $request)
     {
         $this->service->new(CreateSupportDTO::makeFromRequest($request));
         return redirect()->route('supports.index');
@@ -38,6 +45,7 @@ class SupportController extends Controller
         if (!$support = $this->service->findOne($support)) {
             return back();
         }
+
         return view('admin/supports/show', compact('support'));
     }
 
@@ -46,15 +54,18 @@ class SupportController extends Controller
         if (!$support = $this->service->findOne($support)) {
             return back();
         }
+
         return view('admin/supports/edit', compact('support'));
     }
 
     public function update(StoreUpdateSupportRequest $request, string|int $support)
     {
-        $support = $this->service->update(UpdateSupportDTO::makeFromRequest($request));
-        if ($support) {
+        $support = $this->service->update(UpdateSupportDTO::makeFromRequest($request, $support));
+
+        if (!$support) {
             return back();
         }
+
         return redirect()->route('supports.index');
     }
 
