@@ -1,28 +1,37 @@
-<h1>Listagem dos Suportes</h1>
+@extends('admin/layouts/app')
 
-<a href="{{ route('supports.create') }}">Criar Dúvida</a>
+@section('title', 'Fórum')
 
-<table>
-    <thead>
-        <th>Assunto</th>
-        <th>Status</th>
-        <th>Descrição</th>
-        <th></th>
-    </thead>
+@section('headers')
+    @include('admin/supports/partials/header')
+@endsection
 
-    <tbody>
-        @foreach ($supports->items() as $support)
-            <tr>
-                <td>{{ $support->subject }}</td>
-                <td>{{ getStatusSupport($support->status) }}</td>
-                <td>{{ $support->body }}</td>
-                <td>
-                    <a href="{{ route('supports.show', $support->id) }}">Show</a>
-                    <a href="{{ route('supports.edit', $support->id) }}">Edit</a>
-                </td>
-            </tr>
-        @endforeach
-    </tbody>
-</table>
+@section('content')
+    <a href="{{ route('supports.create') }}">Criar Dúvida</a>
 
-<x-pagination :paginator="$supports" :appends="$filters" />
+    <table>
+        <thead>
+            <th>Assunto</th>
+            <th>Status</th>
+            <th>Descrição</th>
+            <th></th>
+        </thead>
+
+        <tbody>
+            @foreach ($supports->items() as $support)
+                <tr>
+                    <td>{{ $support->subject }}</td>
+                    <td>{{ getStatusSupport($support->status) }}</td>
+                    <td>{{ $support->body }}</td>
+                    <td>
+                        <a href="{{ route('supports.show', $support->id) }}">Show</a>
+                        <a href="{{ route('supports.edit', $support->id) }}">Edit</a>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <x-pagination :paginator="$supports" :appends="$filters" />
+@endsection
+
